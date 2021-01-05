@@ -32,11 +32,6 @@ Theta2_grad = zeros(size(Theta2));
 
 % ====================== YOUR CODE HERE ======================
 %
-% Part 1: Feedforward the neural network and return the cost in the
-%         variable J. After implementing Part 1, you can verify that your
-%         cost function computation is correct by verifying the cost
-%         computed in ex4.m
-%
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
 %         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
@@ -76,6 +71,12 @@ hx = sigmoid(a2 * Theta2');
 % TODO: how do I vectorize
 J = (1/m) * ((-y_matrix) .* log(hx) - (1 - y_matrix) .* log(1 - hx));
 J = sum(sum(J));
+
+% Add regularization
+reg_term = sum(sum(Theta1(:,2:end) .^ 2));
+reg_term = reg_term + sum(sum(Theta2(:,2:end) .^ 2));
+reg_term = (lambda / (2*m)) * reg_term;
+J = J + reg_term;
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
