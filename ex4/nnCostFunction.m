@@ -57,12 +57,16 @@ Theta2_grad = zeros(size(Theta2));
 % Recode labels into vectors
 y_matrix = eye(num_labels)(y,:);
 
+% Input input layer
+a1 = [ones(m,1) X];
+
 % Calculate second layer (calculate output, add bias unit)
-z2 = [ones(m,1) X] * Theta1';
+z2 = a1 * Theta1';
 a2 = sigmoid(z2);
+a2 = [ones(m,1) a2];
 
 % Calculate output layer
-z3 = [ones(m,1) a2] * Theta2';
+z3 = a2 * Theta2';
 a3 = sigmoid(z3);
 
 % Calculate the total cost
@@ -76,8 +80,22 @@ reg_term = reg_term + sum(sum(Theta2(:,2:end) .^ 2));
 reg_term = (lambda / (2*m)) * reg_term;
 J = J + reg_term;
 
+% Get d3
+d3 = a3 - y_matrix;
+
+% Get d2
+d2 = d3 * Theta2 .* (a2 .* (1-a2));
+d2 = d2(:,2:end);
+
+% Calculate deltas
+Delta2 = d3' * a2;
+Delta1 = d2' * a1;
+
+% Calculate gradient
+Theta1_grad = 1/m * Delta1;
+Theta2_grad = 1/m * Delta2;
+
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
 
 end
